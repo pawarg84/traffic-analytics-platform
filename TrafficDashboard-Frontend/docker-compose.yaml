@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+restaurant:
+
+build: ./trafficdashboard
+container_name: myres_c
+ports:
+   - '3000:3000'
+stdin_open: true
+tty: true
