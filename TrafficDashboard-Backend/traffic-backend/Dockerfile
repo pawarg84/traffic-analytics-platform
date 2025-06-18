@@ -1,15 +1,17 @@
-FROM eclipse-temurin:17-jdk
+# Use OpenJDK as the base image
+FROM openjdk:17-jdk-slim
 
+# Set the working directory
 WORKDIR /app
 
+# Copy the project files
 COPY . .
 
-# Make mvnw executable
+# Give executable permission if needed (Linux-based CI/CD)
 RUN chmod +x mvnw
 
-# Now run the build
+# Build the app
 RUN ./mvnw clean package -DskipTests
 
-EXPOSE 8080
-
-CMD ["java", "-jar", "target/*.jar"]
+# Run the app
+CMD ["java", "-jar", "target/traffic-backend-0.0.1-SNAPSHOT.jar"]
