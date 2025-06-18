@@ -1,12 +1,15 @@
-# Stage 1: Build the application
-FROM maven:3.8.5-openjdk-17 AS builder
+FROM eclipse-temurin:17-jdk
+
 WORKDIR /app
+
 COPY . .
+
+# Make mvnw executable
+RUN chmod +x mvnw
+
+# Now run the build
 RUN ./mvnw clean package -DskipTests
 
-# Stage 2: Run the application
-FROM eclipse-temurin:17-jdk
-WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+CMD ["java", "-jar", "target/*.jar"]
