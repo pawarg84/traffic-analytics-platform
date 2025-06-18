@@ -1,17 +1,11 @@
-# Use OpenJDK as the base image
-FROM openjdk:17-jdk-slim
+# Use a minimal Java runtime
+FROM eclipse-temurin:17-jdk-alpine
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy the project files
-COPY . .
+# Copy built JAR file
+COPY target/traffic-backend-0.0.1-SNAPSHOT.jar app.jar
 
-# Give executable permission if needed (Linux-based CI/CD)
-RUN chmod +x mvnw
-
-# Build the app
-RUN ./mvnw clean package -DskipTests
-
-# Run the app
-CMD ["java", "-jar", "target/traffic-backend-0.0.1-SNAPSHOT.jar"]
+# Run the Spring Boot application
+CMD ["java", "-jar", "app.jar"]
