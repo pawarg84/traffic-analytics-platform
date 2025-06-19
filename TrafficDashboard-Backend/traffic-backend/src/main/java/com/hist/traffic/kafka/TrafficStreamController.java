@@ -1,4 +1,5 @@
 package com.hist.traffic.kafka;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,7 +13,11 @@ public class TrafficStreamController {
     public TrafficStreamController(TrafficDataConsumer trafficDataConsumer) {
         this.trafficDataConsumer = trafficDataConsumer;
     }
-    @CrossOrigin(origins = "http://localhost:3000")
+
+    @CrossOrigin(origins = {
+        "http://localhost:3000",
+        "https://traffic-analytics-platform.vercel.app"
+    })
     @GetMapping("/traffic-stream")
     public SseEmitter streamTrafficData() {
         return trafficDataConsumer.addEmitter();
