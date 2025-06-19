@@ -13,7 +13,6 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register the components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const Home = () => {
@@ -24,7 +23,7 @@ const Home = () => {
   });
 
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:8080/traffic-stream');
+    const eventSource = new EventSource('https://traffic-analytics-platform.onrender.com/traffic-stream');
 
     eventSource.onmessage = function (event) {
       const data = JSON.parse(event.data);
@@ -40,7 +39,6 @@ const Home = () => {
         updatedData[data.intersectionId].labels.push(new Date(data.timestamp).toLocaleTimeString());
         updatedData[data.intersectionId].data.push(data.vehicleCount);
 
-        // Update chart datasets based on intersection-specific data
         const datasets = Object.keys(updatedData).map((intersectionId) => ({
           label: `Intersection ${intersectionId}`,
           data: updatedData[intersectionId].data,
@@ -68,7 +66,6 @@ const Home = () => {
     };
   }, []);
 
-  // Helper function to generate random colors for each intersection line
   const getRandomColor = () => {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -82,12 +79,10 @@ const Home = () => {
     <div className="container">
       <h2>Real-Time Traffic Dashboard</h2>
 
-      {/* Line Chart for Vehicle Count */}
       <div className="chart">
         <Line data={chartData} key={JSON.stringify(chartData)} />
       </div>
 
-      {/* Traffic Data Table */}
       <div className="traffic-table">
         <h3>Intersection Traffic Details</h3>
         <Table striped bordered hover>
@@ -100,7 +95,7 @@ const Home = () => {
           </thead>
           <tbody>
             {Object.keys(trafficData).length > 0 ? (
-              Object.keys(trafficData).map((intersectionId, index) => (
+              Object.keys(trafficData).map((intersectionId) =>
                 trafficData[intersectionId].data.map((count, idx) => (
                   <tr key={`${intersectionId}-${idx}`}>
                     <td>{intersectionId}</td>
@@ -108,7 +103,7 @@ const Home = () => {
                     <td>{trafficData[intersectionId].labels[idx]}</td>
                   </tr>
                 ))
-              ))
+              )
             ) : (
               <tr>
                 <td colSpan="3">No data available</td>
