@@ -13,7 +13,8 @@ public class TrafficBackendApplication implements CommandLineRunner {
     @Autowired
     private TrafficProducer trafficProducer;
 
-    @Value("${spring.kafka.producer.bootstrap-servers:}")
+    // ✅ FIXED: use correct key for bootstrap-servers
+    @Value("${spring.kafka.bootstrap-servers:}")
     private String kafkaServers;
 
     public static void main(String[] args) {
@@ -23,9 +24,10 @@ public class TrafficBackendApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (kafkaServers != null && !kafkaServers.isEmpty() && !kafkaServers.equals("localhost:9092")) {
+            System.out.println("✅ Kafka config detected. Starting traffic producer...");
             trafficProducer.streamTrafficData();
         } else {
-            System.out.println("🚫 Kafka not configured or localhost fallback detected. Skipping data streaming.");
+            System.out.println("🚫 Kafka not configured or fallback detected. Skipping data streaming.");
         }
     }
 }
