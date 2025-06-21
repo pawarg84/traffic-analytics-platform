@@ -1,3 +1,11 @@
+package com.hist.traffic.kafka;
+
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
 @Service
 public class TrafficProducer {
 
@@ -16,21 +24,20 @@ public class TrafficProducer {
         "Intersection-10"
     };
 
+    // Simulate and send traffic data
     public void streamTrafficData() throws InterruptedException {
-        System.out.println("✅ Kafka Producer started. Streaming traffic data to topic: " + TOPIC);
         while (true) {
             String intersectionId = intersectionIds[random.nextInt(intersectionIds.length)];
             int vehicleCount = random.nextInt(50);
             long initialTime = System.currentTimeMillis(); 
             long timestamp = initialTime + TimeUnit.HOURS.toMillis(random.nextInt(5));
 
-            String data = String.format(
-                "{\"intersectionId\": \"%s\", \"vehicleCount\": %d, \"timestamp\": %d}", 
-                intersectionId, vehicleCount, timestamp
-            );
+            String data = String.format("{\"intersectionId\": \"%s\", \"vehicleCount\": %d, \"timestamp\": %d}", 
+                intersectionId, vehicleCount, timestamp);
 
             kafkaTemplate.send(TOPIC, data);
-            System.out.println("📤 Sent traffic data: " + data);
+            System.out.println("Sent traffic data: " + data);
+
             TimeUnit.SECONDS.sleep(2);
         }
     }
