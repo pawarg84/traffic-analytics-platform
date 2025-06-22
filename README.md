@@ -1,30 +1,32 @@
 # 🚦 Traffic Analytics Platform
 
-A full-stack real-time traffic monitoring and analytics platform built using **Spring Boot**, **Apache Kafka**, **MySQL**, and **React**. It visualizes live traffic data using interactive charts and tables.
+A full-stack real-time traffic monitoring and analytics platform built using **Spring Boot**, **Apache Kafka (Confluent Cloud)**, **MySQL**, and **React**. It visualizes live traffic data with dynamic charts and tables powered by **Server-Sent Events (SSE)**.
 
-> 🔗 **Live Demo:** [https://your-deployed-app.vercel.app](https://your-deployed-app.vercel.app)
+> 🔗 **Live Frontend:** [https://traffic-analytics-platform.vercel.app](https://traffic-analytics-platform.vercel.app)  
+> 🔗 **Live Backend SSE Endpoint:** [https://traffic-analytics-platform.onrender.com/traffic-stream](https://traffic-analytics-platform.onrender.com/traffic-stream)
 
 ---
 
 ## 🧰 Tech Stack
 
-| Layer       | Technology                              |
-|------------|------------------------------------------|
-| Frontend   | React, Chart.js, Bootstrap               |
-| Backend    | Spring Boot, Apache Kafka                |
-| Database   | MySQL                                    |
-| Streaming  | Server-Sent Events (SSE)                 |
-| Deployment | Vercel (Frontend), Render/Heroku (Backend) |
+| Layer       | Technology                                      |
+|-------------|--------------------------------------------------|
+| Frontend    | React, Chart.js, Bootstrap                      |
+| Backend     | Spring Boot, Apache Kafka, SSE                  |
+| Database    | MySQL (Railway)                                 |
+| Streaming   | Kafka on Confluent Cloud + Server-Sent Events   |
+| Deployment  | Vercel (Frontend), Render (Backend)             |
 
 ---
 
 ## 🚀 Features
 
-- 📡 Real-time traffic data generation using Kafka Producer
-- 🎯 Consumer service to stream and persist data to MySQL
-- 📊 React dashboard with dynamic charts and tables
-- 🔁 SSE (Server-Sent Events) for live updates
-- 🔐 CORS-configured secure communication between backend and frontend
+- 📡 Real-time traffic data simulation using Kafka Producer
+- 🎯 Kafka Consumer that streams + persists data to MySQL
+- 📊 React dashboard with live charts and tabular view
+- 🔁 Live updates via Server-Sent Events (SSE)
+- 🧪 Testable via REST and SSE endpoints
+- 🔐 Secure backend with CORS support for frontend integration
 
 ---
 
@@ -38,112 +40,102 @@ traffic-analytics/
 
 ---
 
-## 🛠️ Backend Setup (Spring Boot)
+## ⚙️ Backend Setup (Spring Boot + Kafka)
 
-### 1. Prerequisites
+### 1. Requirements
 
 - Java 17+
-- Apache Kafka + Zookeeper running locally
-- MySQL Database named `tdb`
+- Maven
+- Kafka (Provisioned via Confluent Cloud)
+- MySQL (hosted on Railway or local)
 
-### 2. Configure `application.properties`
+### 2. Environment Variables (on Render)
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/tdb
-spring.datasource.username=root
-spring.datasource.password=yourpassword
+```env
+DB_URL=jdbc:mysql://<your-mysql-url>
+DB_USERNAME=root
+DB_PASSWORD=********
 
-spring.kafka.producer.bootstrap-servers=localhost:9092
+# Confluent Kafka Credentials (set these via environment variables, not hardcoded)
+
+KAFKA_BOOTSTRAP_SERVERS=<your_bootstrap_server>
+KAFKA_API_KEY=<your_api_key>
+KAFKA_API_SECRET=<your_api_secret>
 ```
 
-### 3. Run the Backend
+
+### 3. Run Backend Locally
 
 ```bash
 cd TrafficDashboard-Backend
 ./mvnw spring-boot:run
 ```
 
-> The Kafka producer will simulate traffic every 2 seconds and stream via `/traffic-stream`.
+> Streams traffic data every 2 seconds and broadcasts it at `/traffic-stream`.
 
 ---
 
-## 💻 Frontend Setup (React)
+## 💻 Frontend Setup (React + Chart.js)
 
-### 1. Install dependencies
+### 1. Install & Run
 
 ```bash
 cd TrafficDashboard-Frontend
 npm install
-```
-
-### 2. Run the React App
-
-```bash
 npm start
 ```
 
-> The app will connect to `http://localhost:8080/traffic-stream` and render live traffic data.
-
----
-
-## ☁️ Deployment
-
-### 🔹 Frontend (Vercel or Netlify)
+### 2. Production Build
 
 ```bash
 npm run build
-# Then deploy the `build/` folder to Vercel or Netlify
 ```
 
-### 🔹 Backend (Render, Railway, or Heroku)
-
-- Create a new Spring Boot app
-- Connect to managed MySQL (or configure `DATABASE_URL`)
-- Set `KAFKA_BOOTSTRAP_SERVERS` or equivalent if Kafka is hosted elsewhere
+Deploy the `build/` folder to **Vercel** or **Netlify**.
 
 ---
-## 📦 Useful Scripts
 
-### Frontend
-- `npm start` – Start the React development server
-- `npm run build` – Create production build
+## ☁️ Live Demo Access
 
-### Backend
-- `./mvnw spring-boot:run` – Start backend server (Linux/Mac)
-- `mvnw.cmd spring-boot:run` – For Windows
+- **Frontend Dashboard** → [https://traffic-analytics-platform.vercel.app](https://traffic-analytics-platform.vercel.app)
+- **Real-time Data Stream** → [https://traffic-analytics-platform.onrender.com/traffic-stream](https://traffic-analytics-platform.onrender.com/traffic-stream)
+- **Backend Root** → [https://traffic-analytics-platform.onrender.com](https://traffic-analytics-platform.onrender.com)  
+  (_Returns service confirmation message_)
+
 ---
 
-## 🧪 Sample Traffic Data (MySQL)
+## 🧪 Sample SQL Query
 
 ```sql
-SELECT * FROM trafficdata;
-+----+-----------------+---------------+---------------+
-| id | location        | timestamp     | vehicle_count |
-+----+-----------------+---------------+---------------+
-|  1 | Intersection-3  | 1750160198000 |            12 |
-|  2 | Intersection-5  | 1750169502840 |            39 |
-...
+SELECT * FROM trafficdata ORDER BY timestamp DESC LIMIT 10;
 ```
+
+**Sample Output:**
+
+| id | location        | timestamp     | vehicle_count |
+|----|------------------|---------------|----------------|
+|  1 | Intersection-5   | 1750507130000 | 23             |
+|  2 | Intersection-8   | 1750507233000 | 12             |
+|  3 | Intersection-2   | 1750507331000 | 41             |
 
 ---
 
 ## 📸 Screenshots
 
-| Realtime Chart                    | Traffic Table                     |
-| --------------------------------- | --------------------------------- |
-| ![chart](./screenshots/traffic-dashboard.JPG) | ![table](./screenshots/traffic-dashboard-table.JPG) |
+| Live Chart View                      | Real-time Table                     |
+|--------------------------------------|-------------------------------------|
+| ![Chart](./screenshots/traffic-dashboard.JPG) | ![Table](./screenshots/traffic-dashboard-table.JPG) |
+
+> _Ensure these screenshots exist under `screenshots/` folder in your frontend repo._
 
 ---
 
 ## 🙋‍♂️ Author
 
-Made with ❤️ by [Ganesh Pawar](https://github.com/pawarg84)
+Developed with ❤️ by [Ganesh Pawar](https://github.com/pawarg84)
 
 ---
 
-## 📌 License
+## 📄 License
 
 This project is licensed under the [MIT License](LICENSE)
-
-ECHO is on.
-ECHO is on.
